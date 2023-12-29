@@ -15,7 +15,6 @@ function Gameboard() {
 
   function checkWinner(token) {
     function horizontalAxis() {
-      let result = false;
       gameboard.forEach((row) => {
         let matches = 0;
         row.forEach((cell) => {
@@ -24,14 +23,12 @@ function Gameboard() {
           }
         });
         if (matches == 3) {
-          result = true;
+          return true;
         }
       });
-      return result;
     }
 
     function verticalAxis() {
-      let result = false;
       for (let i = 0; i < columns; i++) {
         let matches = 0;
         gameboard.forEach((row) => {
@@ -40,13 +37,41 @@ function Gameboard() {
           }
         });
         if (matches === 3) {
-          result = true;
+          return true;
         }
       }
-      return result;
     }
 
-    if (horizontalAxis()) {
+    function rightDiagonal() {
+      let matches = 0;
+      for (let i = 0; i < rows; i++) {
+        if (gameboard[i][i] === token) {
+          matches++;
+        }
+      }
+      if (matches === 3) {
+        return true;
+      }
+    }
+
+    function leftDiagonal() {
+      let matches = 0;
+      for (let i = length(rows) - 1; i >= 0; i--) {
+        if (gameboard[i][i] === token) {
+          matches++;
+        }
+      }
+      if (matches === 3) {
+        return true;
+      }
+    }
+
+    if (
+      horizontalAxis() ||
+      verticalAxis() ||
+      rightDiagonal() ||
+      leftDiagonal()
+    ) {
       return true;
     }
   }
@@ -66,7 +91,11 @@ function GameController() {
       score++;
     }
 
-    return { name, token, score, increaseScore };
+    const getName = () => name;
+    const getToken = () => token;
+    const getScore = () => score;
+
+    return { getName, getToken, getScore, increaseScore };
   }
 
   const firstPlayer = createPlayer("Player One", "X");
