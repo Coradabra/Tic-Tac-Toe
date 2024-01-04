@@ -7,6 +7,11 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+h1, h3, p {
+  margin: 0;
+  padding: 0;
+}
+
 .navbar {
   width: 100%;
   display: flex;
@@ -16,6 +21,10 @@ body {
   background-color: rgb(9, 84, 196);
   box-shadow: 4px 4px 8px 4px rgba(0, 0, 0, 0.4);
   color: #e7e7e7;
+}
+
+.navbar h1 {
+  padding: 2rem;
 }
 
 .display {
@@ -29,6 +38,20 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 1rem;
+  border-radius: 1rem;
+  font-size: 36px;
+  margin-bottom: 2rem;
+}
+
+.player-display p {
+  padding-top: 1rem;
+  font-size: 48px;
+}
+
+.currentTurn {
+  background-color: rgb(60, 167, 50);
+  box-shadow: 4px 4px 8px 4px rgba(0, 0, 0, 0.4);
 }
 
 .content {
@@ -46,8 +69,9 @@ body {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
-  background-color: #3f3f3f;
+  background-color: #696969;
   padding: 10px;
+  border-radius: 1rem;
 }
 
 .gameTile {
@@ -55,6 +79,12 @@ body {
   font-size: 12vh;
   margin: 10px;
   box-sizing: border-box;
+  border-radius: 1rem;
+}
+
+.gameTile:hover {
+  box-shadow: 4px 4px 8px 4px rgba(0, 0, 0, 0.4);
+  background-color: #e1ebee;
 }
 
 footer {
