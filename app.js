@@ -45,13 +45,13 @@ function Gameboard() {
     return true;
   }
 
-  return { getBoard, markCell };
+  return { getBoard, markCell, resetBoard };
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
 
 function GameController() {
-  const { getBoard, markCell } = Gameboard();
+  const { getBoard, markCell, resetBoard } = Gameboard();
   const {
     updateTurnDisplay,
     displayWin,
@@ -84,6 +84,7 @@ function GameController() {
 
   function checkWin() {
     const board = getBoard();
+    const linearBoard = [...board[0], ...board[1], ...board[2]];
     const token = activePlayer.getToken();
     let winningCells = null;
 
@@ -121,9 +122,10 @@ function GameController() {
       displayWin(winningCells, activePlayer.getName());
       activePlayer.increaseScore();
       updateScoreDisplays(playerOne.getScore(), playerTwo.getScore());
-    } else if (!board.find("")) {
+    } else if (linearBoard.filter((cell) => cell === token).length > 4) {
       playingRound = false;
-      displayWin([], "No one");
+      toggleBannerMessage("No one");
+      return;
     }
   }
 
@@ -182,7 +184,7 @@ function ViewController() {
     playerTwoScore.textContent = playerTwo;
   }
 
-  function toggleBannerMessage(winningPlayer) {
+  function toggleBannerMessage(winningPlayer, playAgainCallback) {
     const contentDiv = document.querySelector(".content");
     const bannerDisplay = document.querySelector(".message");
     if (bannerDisplay) {
@@ -197,6 +199,7 @@ function ViewController() {
 
       const messageBtn = document.createElement("button");
       messageBtn.textContent = "Play Again?";
+      messageBtn.addEventListener("click", () => playAgainCallback());
       messageDiv.appendChild(messageBtn);
 
       contentDiv.appendChild(messageDiv);
