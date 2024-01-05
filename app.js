@@ -52,7 +52,12 @@ function Gameboard() {
 
 function GameController() {
   const { getBoard, markCell } = Gameboard();
-  const { updateTurnDisplay, displayWin } = ViewController();
+  const {
+    updateTurnDisplay,
+    displayWin,
+    updateScoreDisplays,
+    toggleBannerMessage,
+  } = ViewController();
 
   let playingRound = true;
 
@@ -113,7 +118,12 @@ function GameController() {
 
     if (winningCells) {
       playingRound = false;
-      displayWin(winningCells);
+      displayWin(winningCells, activePlayer.getName());
+      activePlayer.increaseScore();
+      updateScoreDisplays(playerOne.getScore(), playerTwo.getScore());
+    } else if (!board.find("")) {
+      playingRound = false;
+      displayWin([], "No one");
     }
   }
 
@@ -141,8 +151,6 @@ function GameController() {
       }
     });
   });
-
-  return;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -150,6 +158,9 @@ function GameController() {
 function ViewController() {
   const playerOneDisplay = document.querySelector(".player-one");
   const playerTwoDisplay = document.querySelector(".player-two");
+  const scoreDisplays = [...document.querySelectorAll(".score")];
+  const playerOneScore = scoreDisplays[0];
+  const playerTwoScore = scoreDisplays[1];
 
   function updateTurnDisplay() {
     playerOneDisplay.classList.toggle("currentTurn");
@@ -166,13 +177,46 @@ function ViewController() {
     });
   }
 
-  function displayWin(winningCells) {
+  function updateScoreDisplays(playerOne, playerTwo) {
+    playerOneScore.textContent = playerOne;
+    playerTwoScore.textContent = playerTwo;
+  }
+
+  function toggleBannerMessage(winningPlayer) {
+    const contentDiv = document.querySelector(".content");
+    const bannerDisplay = document.querySelector(".message");
+    if (bannerDisplay) {
+      contentDiv.removeChild(bannerDisplay);
+    } else {
+      const messageDiv = document.createElement("div");
+      messageDiv.classList.add("message");
+
+      const messageP = document.createElement("p");
+      messageP.textContent = `${winningPlayer} has won this round!`;
+      messageDiv.appendChild(messageP);
+
+      const messageBtn = document.createElement("button");
+      messageBtn.textContent = "Play Again?";
+      messageDiv.appendChild(messageBtn);
+
+      contentDiv.appendChild(messageDiv);
+    }
+  }
+
+  function displayWin(winningCells, winningPlayer) {
     winningCells.forEach((cellRef) =>
       gameTiles[cellRef].classList.add("winningTile")
     );
+    toggleBannerMessage(winningPlayer);
   }
 
-  return { updateTurnDisplay, updateBoardDisplay, displayWin };
+  return {
+    updateTurnDisplay,
+    updateBoardDisplay,
+    displayWin,
+    updateScoreDisplays,
+    toggleBannerMessage,
+  };
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
