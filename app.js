@@ -2,17 +2,22 @@ const gameTileList = document.querySelectorAll(".gameTile");
 const gameTiles = [...gameTileList];
 
 function Gameboard() {
-  const gameboard = [];
-  const rows = 3;
-  const columns = 3;
+  function resetBoard() {
+    const gameboard = [];
+    const rows = 3;
+    const columns = 3;
 
-  for (let i = 0; i < rows; i++) {
-    const rowArray = [];
-    for (let i = 0; i < columns; i++) {
-      rowArray.push("");
+    for (let i = 0; i < rows; i++) {
+      const rowArray = [];
+      for (let i = 0; i < columns; i++) {
+        rowArray.push("");
+      }
+      gameboard.push(rowArray);
     }
-    gameboard.push(rowArray);
+    return gameboard;
   }
+
+  const gameboard = resetBoard();
 
   const getBoard = () => gameboard;
 
@@ -47,7 +52,9 @@ function Gameboard() {
 
 function GameController() {
   const { getBoard, markCell } = Gameboard();
-  const { updateTurnDisplay, updateBoardDisplay } = ViewController();
+  const { updateTurnDisplay, displayWin } = ViewController();
+
+  let playingRound = true;
 
   function createPlayer(name, token) {
     let score = 0;
@@ -70,13 +77,56 @@ function GameController() {
 
   const getActiveToken = () => activePlayer.getToken();
 
+  function checkWin() {
+    const board = getBoard();
+    const token = activePlayer.getToken();
+    let winningCells = null;
+
+    // Horizontal Check
+    for (let i = 0; i < 3; i++) {
+      const horizontalCheck = [board[i][0], board[i][1], board[i][2]].filter(
+        (cell) => cell === token
+      );
+      horizontalCheck.length === 3
+        ? (winningCells = [i * 3, i * 3 + 1, i * 3 + 2])
+        : null;
+    }
+
+    // Vertical Check
+    for (let i = 0; i < 3; i++) {
+      const verticalCheck = [board[0][i], board[1][i], board[2][i]].filter(
+        (cell) => cell === token
+      );
+      verticalCheck.length === 3 ? (winningCells = [i, i + 3, i + 6]) : null;
+    }
+
+    // Diagonal Checks
+    const rightDiagonalCells = [board[0][0], board[1][1], board[2][2]].filter(
+      (cell) => cell === token
+    );
+    rightDiagonalCells.length === 3 ? (winningCells = [0, 4, 8]) : null;
+
+    const leftDiagonalCells = [board[0][2], board[1][1], board[2][0]].filter(
+      (cell) => cell === token
+    );
+    leftDiagonalCells.length === 3 ? (winningCells = [2, 4, 6]) : null;
+
+    if (winningCells) {
+      playingRound = false;
+      displayWin(winningCells);
+    }
+  }
+
   function changePlayersTurn() {
+    if (!playingRound) {
+      return;
+    }
+
     if (activePlayer === playerOne) {
       activePlayer = playerTwo;
     } else {
       activePlayer = playerOne;
     }
-    console.log(activePlayer.getName());
     updateTurnDisplay();
   }
 
@@ -84,7 +134,11 @@ function GameController() {
     const cellRef = gameTiles.indexOf(tile);
     tile.addEventListener("click", () => {
       const token = getActiveToken();
-      markCell(cellRef, token) ? changePlayersTurn() : null;
+      if (playingRound) {
+        const procceed = markCell(cellRef, token);
+        checkWin();
+        procceed && changePlayersTurn();
+      }
     });
   });
 
@@ -107,77 +161,20 @@ function ViewController() {
     let i = 0;
     gameTiles.forEach((tile) => {
       tile.textContent = linearGameboard[i];
+      tile.classList.remove("winningTile");
       i++;
     });
   }
 
-  return { updateTurnDisplay, updateBoardDisplay };
+  function displayWin(winningCells) {
+    winningCells.forEach((cellRef) =>
+      gameTiles[cellRef].classList.add("winningTile")
+    );
+  }
+
+  return { updateTurnDisplay, updateBoardDisplay, displayWin };
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 GameController();
-// function checkWinner(token) {
-//   function horizontalAxis() {
-//     gameboard.forEach((row) => {
-//       let matches = 0;
-//       row.forEach((cell) => {
-//         if (cell === token) {
-//           matches++;
-//         }
-//       });
-//       if (matches == 3) {
-//         return true;
-//       }
-//     });
-//   }
-
-//   function verticalAxis() {
-//     for (let i = 0; i < columns; i++) {
-//       let matches = 0;
-//       gameboard.forEach((row) => {
-//         if (row[i] === token) {
-//           matches++;
-//         }
-//       });
-//       if (matches === 3) {
-//         return true;
-//       }
-//     }
-//   }
-
-//   function rightDiagonal() {
-//     let matches = 0;
-//     for (let i = 0; i < rows; i++) {
-//       if (gameboard[i][i] === token) {
-//         matches++;
-//       }
-//     }
-//     if (matches === 3) {
-//       return true;
-//     }
-//   }
-
-//   function leftDiagonal() {
-//     let matches = 0;
-//     for (let i = length(rows) - 1; i >= 0; i--) {
-//       if (gameboard[i][i] === token) {
-//         matches++;
-//       }
-//     }
-//     if (matches === 3) {
-//       return true;
-//     }
-//   }
-
-//   if (
-//     horizontalAxis() ||
-//     verticalAxis() ||
-//     rightDiagonal() ||
-//     leftDiagonal()
-//   ) {
-//     return true;
-//   }
-// }
-
-//
