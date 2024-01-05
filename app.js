@@ -2,8 +2,11 @@ const gameTileList = document.querySelectorAll(".gameTile");
 const gameTiles = [...gameTileList];
 
 function Gameboard() {
+  const { updateBoardDisplay } = ViewController();
+  let gameboard = [];
+
   function resetBoard() {
-    const gameboard = [];
+    gameboard = [];
     const rows = 3;
     const columns = 3;
 
@@ -14,10 +17,10 @@ function Gameboard() {
       }
       gameboard.push(rowArray);
     }
-    return gameboard;
+    updateBoardDisplay(gameboard);
   }
 
-  const gameboard = resetBoard();
+  resetBoard();
 
   const getBoard = () => gameboard;
 
@@ -32,8 +35,6 @@ function Gameboard() {
 
     return [row, cell];
   }
-
-  const { updateBoardDisplay } = ViewController();
 
   function markCell(cellRef, token) {
     const [row, cell] = convertCellRef(cellRef);
@@ -82,6 +83,11 @@ function GameController() {
 
   const getActiveToken = () => activePlayer.getToken();
 
+  function resetGame() {
+    resetBoard();
+    playingRound = true;
+  }
+
   function checkWin() {
     const board = getBoard();
     const linearBoard = [...board[0], ...board[1], ...board[2]];
@@ -119,12 +125,13 @@ function GameController() {
 
     if (winningCells) {
       playingRound = false;
-      displayWin(winningCells, activePlayer.getName());
+      displayWin(winningCells);
+      toggleBannerMessage(activePlayer.getName(), resetGame);
       activePlayer.increaseScore();
       updateScoreDisplays(playerOne.getScore(), playerTwo.getScore());
     } else if (linearBoard.filter((cell) => cell === token).length > 4) {
       playingRound = false;
-      toggleBannerMessage("No one");
+      toggleBannerMessage("No one", resetGame);
       return;
     }
   }
@@ -184,7 +191,7 @@ function ViewController() {
     playerTwoScore.textContent = playerTwo;
   }
 
-  function toggleBannerMessage(winningPlayer, playAgainCallback) {
+  function toggleBannerMessage(winningPlayer, playAgainCallBack) {
     const contentDiv = document.querySelector(".content");
     const bannerDisplay = document.querySelector(".message");
     if (bannerDisplay) {
@@ -199,18 +206,20 @@ function ViewController() {
 
       const messageBtn = document.createElement("button");
       messageBtn.textContent = "Play Again?";
-      messageBtn.addEventListener("click", () => playAgainCallback());
+      messageBtn.addEventListener("click", () => {
+        playAgainCallBack();
+        toggleBannerMessage();
+      });
       messageDiv.appendChild(messageBtn);
 
       contentDiv.appendChild(messageDiv);
     }
   }
 
-  function displayWin(winningCells, winningPlayer) {
+  function displayWin(winningCells) {
     winningCells.forEach((cellRef) =>
       gameTiles[cellRef].classList.add("winningTile")
     );
-    toggleBannerMessage(winningPlayer);
   }
 
   return {
