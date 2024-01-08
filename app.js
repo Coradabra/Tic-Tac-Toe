@@ -61,7 +61,22 @@ function GameController() {
     updateNames,
   } = ViewController();
 
+  const modal = document.querySelector(".modal");
   const modalForm = document.querySelector(".modal>form");
+  const resetBtn = document.querySelector(".reset");
+
+  let playingRound = true;
+  let playerOne = null;
+  let playerTwo = null;
+  let activePlayer = playerOne;
+
+  resetBtn.addEventListener("click", () => {
+    resetGame();
+    playerOne = null;
+    playerTwo = null;
+    updateScoreDisplays();
+    modal.showModal();
+  });
 
   modalForm.addEventListener("submit", (event) => {
     const formInputs = [...event.target];
@@ -70,9 +85,20 @@ function GameController() {
     playerTwo = createPlayer(playerData[2], playerData[3]);
     activePlayer = playerOne;
     updateNames(playerOne, playerTwo);
+    console.log(event);
   });
 
-  let playingRound = true;
+  gameTiles.forEach((tile) => {
+    const cellRef = gameTiles.indexOf(tile);
+    tile.addEventListener("click", () => {
+      const token = activePlayer.getToken();
+      if (playingRound) {
+        const procceed = markCell(cellRef, token);
+        checkWin();
+        procceed && changePlayersTurn();
+      }
+    });
+  });
 
   function createPlayer(name, token) {
     let score = 0;
@@ -88,16 +114,22 @@ function GameController() {
     return { getName, getToken, getScore, increaseScore };
   }
 
-  let playerOne = createPlayer("Player One", "X");
-  let playerTwo = createPlayer("Player Two", "O");
-
-  let activePlayer = playerOne;
-
-  const getActiveToken = () => activePlayer.getToken();
-
   function resetGame() {
     resetBoard();
     playingRound = true;
+  }
+
+  function changePlayersTurn() {
+    if (!playingRound) {
+      return;
+    }
+
+    if (activePlayer === playerOne) {
+      activePlayer = playerTwo;
+    } else {
+      activePlayer = playerOne;
+    }
+    updateTurnDisplay();
   }
 
   function checkWin() {
@@ -147,31 +179,6 @@ function GameController() {
       return;
     }
   }
-
-  function changePlayersTurn() {
-    if (!playingRound) {
-      return;
-    }
-
-    if (activePlayer === playerOne) {
-      activePlayer = playerTwo;
-    } else {
-      activePlayer = playerOne;
-    }
-    updateTurnDisplay();
-  }
-
-  gameTiles.forEach((tile) => {
-    const cellRef = gameTiles.indexOf(tile);
-    tile.addEventListener("click", () => {
-      const token = getActiveToken();
-      if (playingRound) {
-        const procceed = markCell(cellRef, token);
-        checkWin();
-        procceed && changePlayersTurn();
-      }
-    });
-  });
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
