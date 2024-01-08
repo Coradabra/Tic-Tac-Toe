@@ -7,6 +7,39 @@
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
+    <dialog open class="modal">
+      <form action="" method="dialog">
+        <div>
+          <div>
+            <h5>Player One</h5>
+            <label for="playerOneName">Username</label>
+            <input id="playerOneName" type="text" />
+            <label for="playerOneToken">Token</label>
+            <input
+              id="playerOneToken"
+              type="text"
+              minlength="1"
+              maxlength="1"
+            />
+          </div>
+          <div>
+            <h5>Player Two</h5>
+            <label for="playerTwoName">Username</label>
+            <input id="playerTwoName" type="text" />
+            <label for="playerTwoToken">Token</label>
+            <input
+              id="playerTwoToken"
+              type="text"
+              minlength="1"
+              maxlength="1"
+            />
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="submit">Start Game!</button>
+        </div>
+      </form>
+    </dialog>
     <header class="navbar">
       <h1>Tic Tac Toe</h1>
       <div class="actions"></div>

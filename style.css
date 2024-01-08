@@ -9,9 +9,60 @@ body {
 
 h1,
 h3,
+h5,
 p {
   margin: 0;
   padding: 0;
+}
+
+.modal {
+  z-index: 10;
+  top: 30vh;
+  border-radius: 1rem;
+  padding: 4rem 2rem;
+  border: 1px solid black;
+}
+
+.modal div {
+  display: flex;
+}
+
+.modal div > div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 0 1rem 1rem;
+}
+
+.modal h5 {
+  font-size: 32px;
+}
+
+.modal input[type="text"] {
+  font-size: inherit;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: #e7e7e7;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 2rem 1rem 0 0;
+}
+
+.modal-actions button {
+  font-size: inherit;
+  padding: 1rem 2rem;
+  border-radius: 1rem;
+  background-color: #4cce40;
+  border: none;
+}
+
+.modal-actions button:hover {
+  box-shadow: 3px 3px 6px 3px rgba(0, 0, 0, 0.3);
+  color: #f0efef;
 }
 
 .navbar {
