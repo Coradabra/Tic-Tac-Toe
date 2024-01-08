@@ -20,7 +20,8 @@ p {
   top: 30vh;
   border-radius: 1rem;
   padding: 4rem 2rem;
-  border: 1px solid black;
+  border: none;
+  box-shadow: 4px 4px 8px 4px rgba(0, 0, 0, 0.3);
 }
 
 .modal div {
@@ -44,6 +45,14 @@ p {
   border: none;
   border-radius: 0.5rem;
   background-color: #e7e7e7;
+}
+
+.modal input[type="text"]:hover,
+.modal input[type="text"]:active,
+.modal input[type="text"]:focus {
+  outline: none;
+  border: none;
+  box-shadow: 3px 3px 6px 3px rgba(0, 0, 0, 0.3);
 }
 
 .modal-actions {

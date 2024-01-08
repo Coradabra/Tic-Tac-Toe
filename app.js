@@ -58,7 +58,19 @@ function GameController() {
     displayWin,
     updateScoreDisplays,
     toggleBannerMessage,
+    updateNames,
   } = ViewController();
+
+  const modalForm = document.querySelector(".modal>form");
+
+  modalForm.addEventListener("submit", (event) => {
+    const formInputs = [...event.target];
+    const playerData = formInputs.map((data) => data.value);
+    playerOne = createPlayer(playerData[0], playerData[1]);
+    playerTwo = createPlayer(playerData[2], playerData[3]);
+    activePlayer = playerOne;
+    updateNames(playerOne, playerTwo);
+  });
 
   let playingRound = true;
 
@@ -76,8 +88,8 @@ function GameController() {
     return { getName, getToken, getScore, increaseScore };
   }
 
-  const playerOne = createPlayer("Player One", "X");
-  const playerTwo = createPlayer("Player Two", "O");
+  let playerOne = createPlayer("Player One", "X");
+  let playerTwo = createPlayer("Player Two", "O");
 
   let activePlayer = playerOne;
 
@@ -167,9 +179,17 @@ function GameController() {
 function ViewController() {
   const playerOneDisplay = document.querySelector(".player-one");
   const playerTwoDisplay = document.querySelector(".player-two");
+  const playerOneName = document.querySelector(".player-one>h3");
+  const playerTwoName = document.querySelector(".player-two>h3");
+
   const scoreDisplays = [...document.querySelectorAll(".score")];
   const playerOneScore = scoreDisplays[0];
   const playerTwoScore = scoreDisplays[1];
+
+  function updateNames(playerOne, playerTwo) {
+    playerOneName.textContent = `${playerOne.getName()} - "${playerOne.getToken()}"`;
+    playerTwoName.textContent = `${playerTwo.getName()} - "${playerTwo.getToken()}"`;
+  }
 
   function updateTurnDisplay() {
     playerOneDisplay.classList.toggle("currentTurn");
@@ -228,6 +248,7 @@ function ViewController() {
     displayWin,
     updateScoreDisplays,
     toggleBannerMessage,
+    updateNames,
   };
 }
 
